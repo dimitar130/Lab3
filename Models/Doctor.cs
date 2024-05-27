@@ -13,8 +13,7 @@ namespace Lab3.Models
         public string Name { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
-
-        public Hospital Hospital { get; set; }
+        public int HospitalId { get; set; }
 
         public virtual ICollection<Patient> Patients { get; set; }
     }

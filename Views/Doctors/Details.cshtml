@@ -9,11 +9,12 @@
 <div>
     <h4>Doctor</h4>
     <hr />
-    <div>
-    @Html.ActionLink("Add Hosptital", "AddHospital", new { id = Model.Id },new {@class="btn btn-success"})
+    <div class="row">
+        <div class="col-md-3">
         @Html.ActionLink("Add Patient", "AddPatient", new { id = Model.Id }, new { @class = "btn btn-success" })
+        </div>
     </div>
-    <dl class="row">
+    <dl class="row">   
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
@@ -32,12 +33,18 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Phone)
         </dd>
+        <dt class="col-sm-2">
+            Hospital:
+        </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Hospital.Name)
+            @ViewBag.HospitalName
         </dd>
+        <dt class="col-sm-2">
+            Hospital Address:
+        </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Hospital.Address)
-        </dd>
+            @ViewBag.HospitalAddress
+        </dd>      
     </dl>
 </div>
 <div>

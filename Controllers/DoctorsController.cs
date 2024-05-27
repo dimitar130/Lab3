@@ -20,11 +20,17 @@ namespace Lab3.Controllers
         }
 
         // GET: Doctors
-        public async Task<IActionResult> Index()
-        {
-            Doctor doctor = _context.Doctors.First();
-
-            return View(await _context.Doctors.ToListAsync());
+        public  IActionResult Index()
+        {                   
+            List<ListDoctorsModel> list = new List<ListDoctorsModel>();
+            foreach(Doctor d in _context.Doctors)
+            {
+                ListDoctorsModel ldm = new ListDoctorsModel();
+                ldm.Doctor = d;
+                ldm.Hospital = _context.Hospitals.FirstOrDefault(m => m.Id.Equals(d.HospitalId));
+                list.Add(ldm);
+            }
+            return View(list);
         }
 
         // GET: Doctors/Details/5
@@ -42,13 +48,20 @@ namespace Lab3.Controllers
                 return NotFound();
             }
 
+            Hospital ?hospital = await _context.Hospitals
+                .FirstOrDefaultAsync(m => m.Id == doctor.HospitalId);
+
+            ViewData["HospitalName"] = hospital.Name;
+
+            ViewData["HospitalAddress"] = hospital.Address;
+
             return View(doctor);
         }
 
         // GET: Doctors/Create
         public IActionResult Create()
         {
-            ViewData["Items"] = new SelectList(_context.Hospitals, "Id", "Name");
+            ViewData["Items"] = _context.Hospitals;
             return View();
         }
 
@@ -60,7 +73,7 @@ namespace Lab3.Controllers
         public async Task<IActionResult> Create([Bind("Id,Name,Address,Phone,HospitalId")] Doctor doctor)
         {
             if (ModelState.IsValid)
-            {
+            {               
                 _context.Add(doctor);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -156,32 +169,11 @@ namespace Lab3.Controllers
         {
             return _context.Doctors.Any(e => e.Id == id);
         }
-
-        public IActionResult AddHospital(int id)
-        {
-            AddDoctorToHospitalDTO model = new AddDoctorToHospitalDTO();
-            model.doctorId = id;
-            model.hospitals = _context.Hospitals.ToList();
-            return View(model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddHospital(AddDoctorToHospitalDTO model)
-        {
-            Doctor doctor = _context.Doctors.Find(model.doctorId);
-            doctor.Hospital = _context.Hospitals.Find(model.hospitalId);
-
-             _context.Update(doctor);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Details", new { id = model.doctorId}); 
-        }
-
+       
         public IActionResult AddPatient(int id)
         {
             PatientDoctor model = new PatientDoctor();
             model.DoctorId = id;
-            model.Patients = _context.Patients.ToList();
             return View(model);
         }
 
